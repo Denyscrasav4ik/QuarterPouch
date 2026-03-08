@@ -2,7 +2,7 @@
 
 ## 📝 Functionality
 
-Basically, all this mod does is put your quarters in "separate slot", similar to Raldi's Crackhouse.
+Basically, all this mod does is put the quarters you collect to a "separate slot" (a quarter pouch), similar to the one from Raldi's Crackhouse.
 
 ## 📜 License
 
