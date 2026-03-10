@@ -12,7 +12,7 @@ using static QuarterPouch.PouchIOWriter;
 
 namespace QuarterPouch
 {
-    [BepInPlugin("denyscrasav4ik.basicallyukrainian.quarterpouch", "Quarter Pouch", "1.0.0")]
+    [BepInPlugin("denyscrasav4ik.basicallyukrainian.quarterpouch", "Quarter Pouch", "1.0.1")]
     public class QuarterPouchPlugin : BaseUnityPlugin
     {
         public static QuarterPouchPlugin Instance;
