@@ -71,7 +71,7 @@ namespace QuarterPouch
 
     public class QuarterPouch : Pouch
     {
-        public QuarterPouch() : base(Items.Quarter, "${0}", 0.25, new Dictionary<Items, double>() { { Items.Quarter, 0.25 } }, "quarter") { }
+        public QuarterPouch() : base(Items.Quarter, "${0}", 0.25, new Dictionary<Items, double>() { { Items.Quarter, 0.25 } }, "quarter") { AddConversionRateIfAvailable("BeastQuarter", 0.25); }
 
         public override string id => "quarter";
 
