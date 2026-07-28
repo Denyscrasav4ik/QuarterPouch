@@ -1,15 +1,13 @@
 ﻿using BepInEx;
 using MTM101BaldAPI.SaveSystem;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace QuarterPouch
 {
     public class PouchIOWriter : ModdedSaveGameIOBinary
     {
-        public override PluginInfo pluginInfo => QuarterPouchPlugin.Instance.Info;
+        public override PluginInfo pluginInfo => QuarterPouchPlugin.Instance!.Info;
 
         public override void Load(BinaryReader reader)
         {

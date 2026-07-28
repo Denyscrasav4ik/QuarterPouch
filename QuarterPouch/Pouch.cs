@@ -1,8 +1,6 @@
 ﻿using MTM101BaldAPI;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace QuarterPouch
 {
@@ -75,7 +73,7 @@ namespace QuarterPouch
 
         public override string id => "quarter";
 
-        double myCap => QuarterPouchPlugin.QuarterSizeLimit.Value * 0.25;
+        double myCap => QuarterPouchPlugin.QuarterSizeLimit!.Value * 0.25;
 
         public override string DisplayString()
         {

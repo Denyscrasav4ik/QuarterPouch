@@ -1,11 +1,9 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections;
-using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
-using MTM101BaldAPI;
 using MTM101BaldAPI.Registers;
 
 namespace QuarterPouch
@@ -42,13 +40,19 @@ namespace QuarterPouch
     [HarmonyPatch(typeof(ItemManager), "UseItem")]
     public class UseItemPatch
     {
-        static FieldInfo audUse = AccessTools.DeclaredField(typeof(ITM_Acceptable), "audUse");
         static MethodInfo UpdateSelect = AccessTools.DeclaredMethod(typeof(ItemManager), "UpdateSelect");
 
-        static bool Prefix(ItemManager __instance, PlayerManager ___pm, ItemObject[] ___items, int ___selectedItem)
+        static bool Prefix(ItemManager __instance, PlayerManager ___pm, ItemObject[] ___items, int ___selectedItem, bool ___disabled)
         {
-            RaycastHit hit;
+            if (___disabled && (!___items[___selectedItem].overrideDisabled || __instance.maxItem < 0))
+            {
+                return true;
+            }
 
+            var pouchManager = ___pm.GetPouchManager();
+            if (pouchManager == null) return true;
+
+            RaycastHit hit;
             if (Physics.Raycast(
                 ___pm.transform.position,
                 Singleton<CoreGameManager>.Instance.GetCamera(___pm.playerNumber).transform.forward,
@@ -58,31 +62,28 @@ namespace QuarterPouch
             {
                 foreach (IItemAcceptor component in hit.transform.GetComponents<IItemAcceptor>())
                 {
-                    var pouchManager = ___pm.GetPouchManager();
-                    if (pouchManager == null) return true;
+                    if (___items[___selectedItem] != null && ___items[___selectedItem].itemType != Items.None && component.ItemFits(___items[___selectedItem].itemType))
+                    {
+                        return true;
+                    }
 
                     foreach (Pouch p in pouchManager.Pouches)
                     {
                         for (int i = 0; i < p.actingItems.Length; i++)
                         {
-                            if (component.ItemFits(p.actingItems[i]))
+                            Items actingItem = p.actingItems[i];
+                            double cost = p.itemConversionRates.ContainsKey(actingItem) ? p.itemConversionRates[actingItem] : p.spendPerUse;
+
+                            if (component.ItemFits(actingItem) && p.amount >= cost)
                             {
-                                if (___items[___selectedItem].itemType == p.actingItems[i])
-                                    return true;
+                                ItemObject itemObj = ItemMetaStorage.Instance.FindByEnum(actingItem).value;
+                                Item instantiatedItem = UnityEngine.Object.Instantiate(itemObj.item);
 
-                                if (p.Spend(p.actingItems[i]))
+                                if (instantiatedItem.Use(___pm))
                                 {
-                                    Item itmF = ItemMetaStorage.Instance.FindByEnum(p.actingItems[i]).value.item;
-
-                                    if (itmF is ITM_Acceptable itm)
-                                    {
-                                        Singleton<CoreGameManager>.Instance.audMan.PlaySingle(
-                                            (SoundObject)audUse.GetValue(itm));
-                                    }
-
+                                    p.Spend(actingItem);
+                                    instantiatedItem.PostUse(___pm);
                                     UpdateSelect.Invoke(__instance, null);
-                                    component.InsertItem(___pm, ___pm.ec);
-
                                     return false;
                                 }
                             }

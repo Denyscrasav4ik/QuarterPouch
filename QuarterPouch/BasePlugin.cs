@@ -1,27 +1,26 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
-using MTM101BaldAPI;
 using MTM101BaldAPI.SaveSystem;
 using UnityEngine;
 using static QuarterPouch.PouchIOWriter;
 
 namespace QuarterPouch
 {
-    [BepInPlugin("denyscrasav4ik.basicallyukrainian.quarterpouch", "Quarter Pouch", "1.0.3")]
+    [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
+    [BepInPlugin("denyscrasav4ik.thedumbfactory.quarterpouch", "Quarter Pouch", "1.0.4")]
     public class QuarterPouchPlugin : BaseUnityPlugin
     {
-        public static QuarterPouchPlugin Instance;
+        public static QuarterPouchPlugin? Instance;
 
-        public static ConfigEntry<int> QuarterSizeLimit;
+        public static ConfigEntry<int>? QuarterSizeLimit;
 
         public static Dictionary<string, double> savedPouches = new Dictionary<string, double>();
 
-        public static event Action<PouchManager> InitializePouches;
+        public static event Action<PouchManager>? InitializePouches;
 
         public static void CallPouchInit(PouchManager pm)
         {
@@ -61,7 +60,7 @@ namespace QuarterPouch
     {
         public static PouchManager GetPouchManager(this PlayerManager me)
         {
-            if (me == null) return null;
+            if (me == null) return null!;
 
             PouchManager pouchM = Singleton<CoreGameManager>.Instance
                 .gameObject
